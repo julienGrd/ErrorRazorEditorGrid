@@ -1,0 +1,73 @@
+﻿@page "/fetchdata"
+@using ErrorRazorEditorGrid.Data
+@using ErrorRazorEditorGrid.Grid
+@inject WeatherForecastService ForecastService
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @*<table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
+    <ErrorRazorEditorGrid.Grid.GeckosGrid Items="forecasts"
+                                          SingleLine="true">
+        <Columns>
+            <GeckosGridColumn CanOrder="true" Header="Date" FitContent="true" Context="f" Index="1" T="@WeatherForecast" OrderingExpression="@nameof(WeatherForecast.Date)">
+                <Body>
+                    @f.Date.ToShortDateString()
+                </Body>
+            </GeckosGridColumn>
+            <GeckosGridColumn CanOrder="true" Header="TemperatureC" FitContent="true" Context="f" Index="2" T="@WeatherForecast" OrderingExpression="@nameof(WeatherForecast.TemperatureC)">
+                <Body>
+                    @f.TemperatureC
+                </Body>
+            </GeckosGridColumn>
+            <GeckosGridColumn CanOrder="true" Header="TemperatureF" FitContent="true" Context="f" Index="2" T="@WeatherForecast" OrderingExpression="@nameof(WeatherForecast.TemperatureF)">
+                <Body>
+                    @f.TemperatureF
+                </Body>
+            </GeckosGridColumn>
+            <GeckosGridColumn CanOrder="true" Header="Summary" FitContent="true" Context="f" Index="2" T="@WeatherForecast" OrderingExpression="@nameof(WeatherForecast.Summary)">
+                <Body>
+                    @f.Summary
+                </Body>
+            </GeckosGridColumn>
+        </Columns>
+    </ErrorRazorEditorGrid.Grid.GeckosGrid>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+    }
+}

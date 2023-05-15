@@ -1,0 +1,26 @@
+﻿@using ErrorRazorEditorGrid.Grid.Models;
+@typeparam TableItem
+@inherits CustomBaseComponent
+@{
+    //var rowGroupModel = Element as RowGroupModel<TableItem>;
+    var rowModel = Element as RowModel<TableItem>;
+    //if (rowGroupModel != null && rowGroupModel.ViewGroup.Element == null)//cas classique groupement par pagedCollectionView
+    //{
+
+    //    <GeckosHeaderGroupingGrid Group="rowGroupModel"></GeckosHeaderGroupingGrid>
+    //}
+    //else if (rowGroupModel != null && rowGroupModel.ViewGroup.Element != null)//cas de groupement sur element par treeview
+    //{
+    //    <GeckosGridRow GroupedElement="rowGroupModel" Element="rowGroupModel.ViewGroup.Element" Index="@Index"></GeckosGridRow>
+    //}
+    if (rowModel != null)
+    {
+        //on n'utilise pas data-* car blazor plante, voir https://github.com/aspnet/AspNetCore/issues/7509
+        <GeckosGridRow Element="rowModel.Element" Index="@Index"></GeckosGridRow>
+
+        @if (Container.ShowSubRow && Container.GridSubRow != null)
+        {
+            <GeckosGridRow IsHidden="@Container.IsGridSubRowHidden" Element="rowModel.Element" GridSubRow="@Container.GridSubRow" Index="@Index"></GeckosGridRow>
+        }
+    }
+}

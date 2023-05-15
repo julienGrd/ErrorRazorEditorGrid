@@ -1,0 +1,13 @@
+﻿@typeparam TableItem
+@inherits CustomBaseComponent
+<tr class="group-grid-row @(this.Group.IsExpand ? "expand" : "")" @onclick="@Expand" level="@Group.ViewGroup.Depth">
+    <td colspan="@(Container.InternalColumns.Count + 1)" class="">
+        <div class="row-expander" style="margin-left:@(((Group.ViewGroup.Depth) * 0.9).ToString(System.Globalization.CultureInfo.InvariantCulture))rem;@Container.StyleExpander">
+            <div class="group-header-text d-flex flex-grow-1">
+                @GroupHeaderText()
+            </div>
+            
+        </div>
+
+    </td>
+</tr>

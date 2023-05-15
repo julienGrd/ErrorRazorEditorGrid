@@ -1,0 +1,64 @@
+﻿@using ErrorRazorEditorGrid.Grid.Models;
+@typeparam TableItem
+@inherits CustomBaseComponent
+@{
+    var idx = 0;
+}
+@if (Items != null)
+{
+    @*@foreach (var element in Items)
+        {*@
+    @if (this.Container.VirtualizeIfRowCountSuperiorAt.HasValue && (Items.Count() > this.Container.VirtualizeIfRowCountSuperiorAt.Value))
+    {
+        <Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize Items="Items.ToList()" Context="element" TItem="BaseRowModel<TableItem>">
+            @{
+                <GeckosGridRowRenderer Index="Items.ToList().IndexOf(element)" Element="element"></GeckosGridRowRenderer>
+            }
+        </Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize>
+    }
+    else
+    {
+        foreach (var element in Items)
+        {
+            <GeckosGridRowRenderer Index="Items.ToList().IndexOf(element)" Element="element"></GeckosGridRowRenderer>
+        }
+    }
+    @*<Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize Items="Items.ToList()" Context="element" TItem="BaseRowModel<TableItem>">
+            @{
+                <GeckosGridRowRenderer Index="Items.ToList().IndexOf(element)" Element="element"></GeckosGridRowRenderer>
+                var localIdx = idx++;
+                var rowGroupModel = element as RowGroupModel<TableItem>;
+                var rowModel = element as RowModel<TableItem>;
+                if (rowGroupModel != null && rowGroupModel.ViewGroup.Element == null)//cas classique groupement par pagedCollectionView
+                {
+
+                    <GeckosHeaderGroupingGrid Group="rowGroupModel"></GeckosHeaderGroupingGrid>
+                }
+                else if (rowGroupModel != null && rowGroupModel.ViewGroup.Element != null)//cas de groupement sur element par treeview
+                {
+                    <GeckosGridRow GroupedElement="rowGroupModel" Element="rowGroupModel.ViewGroup.Element" Index="@localIdx"></GeckosGridRow>
+                }
+                else if (rowModel != null)
+                {
+                    //on n'utilise pas data-* car blazor plante, voir https://github.com/aspnet/AspNetCore/issues/7509
+                    <GeckosGridRow Element="rowModel.Element" Index="@localIdx"></GeckosGridRow>
+
+                    @if (Container.ShowSubRow && Container.GridSubRow != null)
+                    {
+                        <GeckosGridRow IsHidden="@Container.IsGridSubRowHidden" Element="rowModel.Element" GridSubRow="@Container.GridSubRow" Index="@localIdx"></GeckosGridRow>
+                    }
+                }
+
+            }
+        </Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize>*@
+
+    //}
+
+    @*</Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize>*@
+    @*@foreach (var element in Items)
+        {
+
+
+        }*@
+}
+

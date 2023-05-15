@@ -1,0 +1,45 @@
+﻿@typeparam TableItem
+@inherits BaseGridComponent<TableItem>
+@using Is.Geckos.Blazor.Client.Components.Framework.Grid.Models;
+@using  Is.Geckos.Core.Extensions
+<div class="geckos-grid @ComponentClass @(IsTransparent ? "transparent" : "") @(CanScroll ? "scrollable" : "")" id="@ContainerId" @onkeyup="@OnKeyUp" @onkeyup:preventDefault="KeyDownPreventDefault" @onkeyup:stopPropagation="KeyDownPreventDefault">
+    <table class="table table-sm table-borderless @(TableClass ?? "")" id="@this.Id" tabindex="0">
+        
+        <thead class="@(HideHeader ? "hidden-header" : "")">
+            @if (AdditionalHeader != null) {
+                @(AdditionalHeader)
+            }
+            <tr>
+                @if ((this.PagedCollectionView?.IsGrouped ?? false) || this.CanRowExpand)//
+                {
+                    var subList = this.TotalRows.Where(r => r is RowGroupModel<TableItem>)
+                                                                    .Cast<RowGroupModel<TableItem>>()
+                                                                    .Where(r => (r.ViewGroup.SubGroups?.Any() ?? false) || (r.ViewGroup.Items?.Any() ?? false))
+                                                                    .Select(r => r.ViewGroup);
+                    int lDepth = subList.Any() ? subList.Max(g => g.Depth) : 0;
+                    var lWidth = ((lDepth + 1) * 1.2) + 0.8;
+                    <th scope="col" style="width:@(lWidth.ToString(System.Globalization.CultureInfo.InvariantCulture))rem">
+                        <div class="row-expander @(IsGlobalExpand ? "expand" : "")" @onclick="@(() => GlobalExpand())" title="@(IsGlobalExpand ? "Masquer les lignes de détail par groupe" : "Afficher le détail des groupes")">
+
+                        </div>
+                    </th>
+                }
+                <CascadingValue Value="this" IsFixed="true">
+                    @(Columns)
+                </CascadingValue>
+            </tr>
+        </thead>
+        <tbody @ref="contentElement" class="group-element @(Disabled ? "disabled": "")">
+
+            <CascadingValue Value="this">
+                <GeckosListGridRow Items="@(this.RowsToShow)"></GeckosListGridRow>
+            </CascadingValue>
+        </tbody>
+    </table>
+    @if (CanOpenContextMenuOnEmpty)
+    {
+        <div class="grid-context-menu-zone" @oncontextmenu="((args) => OnContextMenuEmpty(args))">
+
+        </div>
+    }
+</div>

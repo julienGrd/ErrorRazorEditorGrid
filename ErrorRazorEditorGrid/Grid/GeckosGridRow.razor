@@ -1,0 +1,91 @@
+﻿@typeparam TableItem
+@inherits CustomBaseComponent
+@if (!(this.IsHidden?.Invoke(Element) ?? false))
+{
+    <tr title="@(Container.RowTitle?.Invoke(Element))" element-row-id="@(Container.GetElementId?.Invoke(Element) ?? "-1")"
+        id="@(Id)"
+        class="element-grid-row @(Container.RowClass?.Invoke(Element))
+                                @(Index % 2 == 0 ? "even-element" : "odd-element")
+                                @(!Container.CanSelectRow?.Invoke(Element) ?? false ? "disabled" : "")
+                                @(Container.HaveRowSeparator ? "separator" : "")
+                                @(Container.SingleLine ? "overflow-row" : "")
+                                @(Container.DisableSelection ? "disabled-selection" : "")
+                                @((IsSelected) ? "selected-element" : "")
+                                @((IsSubRow) ? "sub-row" : "")"
+    @onclick="@((args) => SelectElement(Element, args))"
+    @ondblclick="@((args) => SelectAndValideElement(Element, args))"
+    @oncontextmenu="@((args) => RightClickRow(Element, args))"
+        draggable="@((Container.CanDrag && Container.OnDragStart != null).ToString().ToLower())"
+    @ondragstart="@(() => Container.OnDragStart?.Invoke(Element))">
+       @* @if (this.Container.HaveExpander())
+        {
+            if (GroupedElement != null && (GroupedElement.ViewGroup.SubGroups?.Any() ?? false))
+            {
+                <td @onclick="@Expand">
+                    <div class="row-expander" style="margin-left:@(((GroupedElement.ViewGroup.Depth) * 0.9).ToString(System.Globalization.CultureInfo.InvariantCulture))rem">
+                        @if (GroupedElement.IsExpand)
+                        {
+                            <i class="fas fa-fw fa-angle-down"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-fw fa-angle-right"></i>
+                        }
+                    </div>
+
+                </td>
+            }
+            else
+            {
+                <td></td>
+            }
+
+        }*@
+        @if (IsSubRow)
+        {
+            @GridSubRow(Element)
+        }
+        else
+        {
+            @foreach (var c in this.Container.InternalColumns.OrderBy(c => c.Index))
+            {
+                <td scope="col"
+        @ondblclick="(() => OnCellDblClick(c))"
+        @oncontextmenu="@((args) => RightClickCell(Element, args, c))"
+        @oncontextmenu:preventDefault="c.OnRightClickCell != null"
+        @oncontextmenu:stopPropagation="c.OnRightClickCell != null"
+                    title="@(c.CellTitle?.Invoke(Element))"
+                    style="@c.Style @(string.IsNullOrEmpty(c.MaxWidth) ? "": "max-width: " + c.MaxWidth)"
+                    class="@(Container.SingleLine ? "text-no-break" : "")
+                            @(c.CssClass?.Invoke(Element))
+                            @(c.FitContent ? "fit-content" : "")">
+                    @if (ColumnsEdited.Contains(c.Index))
+                    {
+                        <div class="d-flex">
+                            <div class="flex-grow-1">@(c.EditTemplate(Element))</div>
+                            <a @onclick="() => ColumnsEdited.Remove(c.Index)" title="Valider">
+                                <i class="fas fa-check"></i>
+                            </a>
+                        </div>
+
+                    }
+                    else
+                    {
+                        @*if (GroupedElement != null && GroupedElement.Parent?.ViewGroup != null && this.Container.InternalColumns.FirstOrDefault().Equals(c))
+                        {
+                            <span style="@($"padding-left : {(GroupedElement.Parent.ViewGroup.Depth + 1) * 3}rem")">
+                                @(c.Body(Element))
+                            </span>
+                        }
+                        else
+                        {
+                            
+                        }*@
+                        @(c.Body(Element))
+                    }
+
+                </td>
+            }
+        }
+    </tr>
+}
